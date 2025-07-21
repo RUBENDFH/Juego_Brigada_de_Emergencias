@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Juego Brigada de Emergencias</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: black;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: red;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      height: 25vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .logo-container {
+      display: flex;
+      height: 75vh;
+      padding: 0 5%;
+      box-sizing: border-box;
+    }
+
+    .logo, .center {
+      width: 33.33%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* centra vertical */
+      align-items: center;     /* centra horizontal */
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Tamaños de los logos: ajusta estos valores según necesites */
+    #logo-brigada {
+      max-width: 50%;  /* Cambia este valor para agrandar o reducir */
+      max-height: 50%;
+      object-fit: contain;
+    }
+
+    #logo-cnsr {
+      max-width: 33%;  /* Cambia este valor para agrandar o reducir */
+      max-height: 33%;
+      object-fit: contain;
+    }
+
+    .center #container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      max-width: 100%;
+      width: 90%;  /* ancho del recuadro */
+      color: black;
+      text-align: center;
+    }
+
+    .btn {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .option {
+      display: block;
+      margin: 10px 0;
+      text-align: left;
+    }
+
+    .option button {
+      width: 100%;
+      text-align: left;
+    }
+
+    #timer, #score {
+      font-weight: bold;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px) {
+      header {
+        font-size: 24px;
+        padding: 20px 10px;
+        height: auto;
+        min-height: 80px;
+      }
+
+      .logo-container {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+      }
+
+      .logo, .center {
+        width: 100%;
+        height: auto;
+        padding: 10px 0;
+      }
+
+      .center #container {
+        width: 100%;
+        padding: 20px;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      header {
+        font-size: 20px;
+        padding: 15px 8px;
+      }
+
+      .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    ¿QUÉ TANTO ESTÁS PREPARADO PARA UNA EMERGENCIA?
+  </header>
+
+  <div class="logo-container">
+    <!-- Logo Brigada a la izquierda -->
+    <div class="logo">
+      <img src="Logo_brigada_CNSR.png" alt="Logo Brigada" id="logo-brigada">
+    </div>
+
+    <div class="center">
+      <div id="start-screen">
+        <div id="container">
+          <h2>Bienvenido al juego</h2>
+          <p>Pon a prueba tus conocimientos sobre la brigada de emergencias CNSR.</p>
+          <button class="btn" onclick="startGame()">Comenzar</button>
+        </div>
+      </div>
+
+      <div id="game" class="hidden">
+        <div id="container">
+          <p id="question-number"></p>
+          <p id="question-text"></p>
+          <div id="options"></div>
+          <p>Tiempo restante: <span id="timer">30</span> segundos</p>
+          <p>Aciertos: <span id="score">0</span></p>
+          <button class="btn" onclick="useFiftyFifty()">50:50</button>
+          <button class="btn" id="next-button" onclick="nextQuestion()" disabled>Siguiente pregunta</button>
+          <button class="btn" onclick="restartGame()">Reiniciar</button>
+        </div>
+      </div>
+
+      <div id="end-screen" class="hidden">
+        <div id="container">
+          <h2>Juego terminado</h2>
+          <p>Tu puntaje final es: <span id="final-score"></span> aciertos.</p>
+          <button class="btn" onclick="restartGame()">Jugar de nuevo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo CNSR a la derecha -->
+    <div class="logo">
+      <img src="Logo_CNSR.jpg" alt="Logo CNSR" id="logo-cnsr">
+    </div>
+  </div>
+
+  <audio id="game-audio" src="sonido.mp3" loop></audio>
+
+  <script>
+    const questions = [
+      {
+        question: "1. Al recibir la señal de ALERTA, un sonido intermitente, usted debe:",
+        options: ["A. Suspender de inmediato todas las actividades.", "B. Gritar con mucha fuerza.", "C. Esconderse.", "D. Asustarse."],
+        answer: 0
+      },
+      {
+        question: "2. Posteriormente al recibir la señal de alerta, usted debe:",
+        options: ["A. Pensar.", "B. Llorar.", "C. Organizarse con las personas presentes en el lugar para evacuar.", "D. Devolverse a buscar sus pertenencias."],
+        answer: 2
+      },
+      {
+        question: "3. Antes de pensar en evacuar, usted debe:",
+        options: ["A. Ir al baño a hacer chichi y popo.", "B. Llamar a sus familias.", "C. Ir por la cafetera del servicio.", "D. Ponerse bajo el mando del Coordinador de Evacuación o del Brigadista."],
+        answer: 3
+      },
+      {
+        question: "4. ¿Quién es el coordinador de evacuación de su área?",
+        options: ["A. El enfermero profesional o jefe del área que esta de turno.", "B. El medico de turno.", "C. El compañero que más corre.", "D. El paciente que menos enfermo se encuentre."],
+        answer: 0
+      },
+      {
+        question: "5. ¿Con qué color identifica usted a los brigadistas de CNSR?",
+        options: ["A. Azul.", "B. Rojo.", "C. Blanco.", "D. No tiene color definido."],
+        answer: 1
+      },
+      {
+        question: "6. Al recibir la señal de alarma por parte del coordinador de evacuación, usted debe:",
+        options: ["A. Avisarle a sus compañeros.", "B. Salir corriendo.", "C. Meterse debajo del escritorio.", "D. Seguir estrictamente las indicaciones del coordinador de evacuación."],
+        answer: 3
+      },
+      {
+        question: "7. Durante la evacuación usted debe:",
+        options: ["A. Mantener el orden.", "B. Mantener la calma.", "C. Ir conversando con sus compañeros.", "D. A y B son correctas."],
+        answer: 3
+      },
+      {
+        question: "8. Durante la evacuación usted por NINGUN MOTIVO debe:",
+        options: ["A. Meterse las manos a los bolsillos.", "B. Evacuar sin plata.", "C. Usar los ascensores.", "D. Evacuar de un área diferente a la suya."],
+        answer: 2
+      },
+      {
+        question: "9. ¿Cuál es el punto de encuentro de CNSR?",
+        options: ["A. La estación de enfermería.", "B. La capilla.", "C. La casa de cada uno.", "D. Parqueadero externo de la clínica."],
+        answer: 3
+      },
+      {
+        question: "10. La evacuación se debe realizar por:",
+        options: ["A. Carril izquierdo.", "B. Carril derecho.", "C. Por las ventanas.", "D. Por los ascensores."],
+        answer: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 30;
+    let fiftyFiftyUsed = 0;
+
+    const startScreen = document.getElementById('start-screen');
+    const game = document.getElementById('game');
+    const endScreen = document.getElementById('end-screen');
+    const questionNumber = document.getElementById('question-number');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options');
+    const timerDisplay = document.getElementById('timer');
+    const scoreDisplay = document.getElementById('score');
+    const finalScore = document.getElementById('final-score');
+    const nextButton = document.getElementById('next-button');
+    const audio = document.getElementById('game-audio');
+
+    function startGame() {
+      startScreen.classList.add('hidden');
+      game.classList.remove('hidden');
+      currentQuestion = 0;
+      score = 0;
+      fiftyFiftyUsed = 0;
+      scoreDisplay.textContent = score;
+      audio.play().catch(() => {});
+      showQuestion();
+    }
+
+    function showQuestion() {
+      nextButton.disabled = true;
+      const q = questions[currentQuestion];
+      questionNumber.textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
+      questionText.textContent = q.question;
+      optionsContainer.innerHTML = '';
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.className = 'btn option';
+        btn.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(btn);
+      });
+      timeLeft = 30;
+      timerDisplay.textContent = timeLeft;
+      clearInterval(timer);
+      timer = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerDisplay.textContent = timeLeft;
+      if (timeLeft === 0) {
+        clearInterval(timer);
+        Array.from(optionsContainer.children).forEach(btn => btn.disabled = true);
+        nextButton.disabled = false;
+      }
+    }
+
+    function selectAnswer(index) {
+      clearInterval(timer);
+      const correct = questions[currentQuestion].answer;
+      if (index === correct) score++;
+      scoreDisplay.textContent = score;
+      Array.from(optionsContainer.children).forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correct) btn.style.backgroundColor = 'green';
+        else if (i === index) btn.style.backgroundColor = 'red';
+      });
+      nextButton.disabled = false;
+    }
+
+    function useFiftyFifty() {
+      if (fiftyFiftyUsed >= 2) return;
+      const correct = questions[currentQuestion].answer;
+      let removed = 0;
+      for (let i = 0; i < 4; i++) {
+        if (i !== correct && removed < 2) {
+          optionsContainer.children[i].style.visibility = 'hidden';
+          removed++;
+        }
+      }
+      fiftyFiftyUsed++;
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) showQuestion();
+      else endGame();
+    }
+
+    function endGame() {
+      clearInterval(timer);
+      audio.pause();
+      audio.currentTime = 0;
+      game.classList.add('hidden');
+      endScreen.classList.remove('hidden');
+      finalScore.textContent = score;
+    }
+
+    function restartGame() {
+      clearInterval(timer);
+      audio.pause();
+      audio.currentTime = 0;
+      endScreen.classList.add('hidden');
+      game.classList.add('hidden');
+      startScreen.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
