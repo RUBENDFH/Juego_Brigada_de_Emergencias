@@ -5,182 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Juego Brigada de Emergencias</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background-color: black;
-      color: white;
-      overflow-x: hidden;
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    color: white;
+  }
+
+  .header {
+    background-color: red;
+    height: 25vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: white;
+  }
+
+  .main-content {
+    display: flex;
+    height: 75vh;
+  }
+
+  .logo-container {
+    width: 33.33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .center {
+    width: 33.33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo {
+    max-width: 120px;
+    height: auto;
+  }
+
+  #container {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    background-color: red;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: darkred;
+  }
+
+  @media (max-width: 600px) {
+    .main-content {
+      flex-direction: column;
+      align-items: center;
+      height: auto;
     }
 
-    header {
-      background-color: red;
-      color: white;
-      text-align: center;
-      padding: 40px 20px;
-      height: 25vh;
-      display: flex;
+    .logo-container {
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-sizing: border-box;
-      font-size: 32px;
-      font-weight: bold;
-    }
-
-    .logo-container {
-      display: flex;
-      height: 75vh;
-      padding: 0 5%;
-      box-sizing: border-box;
-    }
-
-    .logo, .center {
-      width: 33.33%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center; /* centra vertical */
-      align-items: center;     /* centra horizontal */
-      height: 100%;
-      box-sizing: border-box;
-    }
-
-    /* Tamaños de los logos: ajusta estos valores según necesites */
-    #logo-brigada {
-      max-width: 50%;  /* Cambia este valor para agrandar o reducir */
-      max-height: 50%;
-      object-fit: contain;
-    }
-
-    #logo-cnsr {
-      max-width: 33%;  /* Cambia este valor para agrandar o reducir */
-      max-height: 33%;
-      object-fit: contain;
-    }
-
-    .center #container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      max-width: 100%;
-      width: 90%;  /* ancho del recuadro */
-      color: black;
+      width: 100%;
+      height: auto;
+      padding: 10px;
       text-align: center;
     }
 
-    .btn {
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      background-color: #0056b3;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .option {
-      display: block;
-      margin: 10px 0;
-      text-align: left;
-    }
-
-    .option button {
-      width: 100%;
-      text-align: left;
-    }
-
-    #timer, #score {
-      font-weight: bold;
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 900px) {
-      header {
-        font-size: 24px;
-        padding: 20px 10px;
-        height: auto;
-        min-height: 80px;
-      }
-
-      .logo-container {
-        flex-direction: column;
-        height: auto;
-        padding: 10px;
-      }
-
-      .logo, .center {
-        width: 100%;
-        height: auto;
-        padding: 10px 0;
-      }
-
-      .center #container {
-        width: 100%;
-        padding: 20px;
-      }
-
-      .btn {
-        padding: 12px 20px;
-        font-size: 16px;
-      }
-    }
-
-    @media (max-width: 500px) {
-      header {
-        font-size: 20px;
-        padding: 15px 8px;
-      }
-
-      .btn {
-        padding: 10px 15px;
-        font-size: 14px;
-      }
-    }
-    /* Ajustes responsive para pantallas pequeñas (celulares) */
-    @media (max-width: 600px) {
-    .logo-container {
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: auto !important;
-    padding: 10px !important;
-  }
-
     .logo {
-    width: 60% !important;
-    height: auto !important;
-    margin-bottom: 15px !important;
-    display: block !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
+      max-width: 100px; /* ajusta este valor si quieres más grande o pequeño */
+      height: auto;
+      margin: 10px auto;
+      display: block;
+    }
 
     .center {
-    width: 90% !important;
-    padding: 10px !important;
-    box-sizing: border-box !important;
-    color: black !important;
-  }
+      width: 90%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
 
     #container {
-    max-width: 100% !important;
-    padding: 15px !important;
-    box-sizing: border-box !important;
+      max-width: 100%;
+      padding: 15px;
+      box-sizing: border-box;
+    }
   }
-}
+</style>
 
-
-  </style>
 </head>
 <body>
 
